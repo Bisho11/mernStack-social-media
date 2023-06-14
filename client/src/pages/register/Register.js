@@ -22,7 +22,7 @@ export default function Register() {
         password: password.current.value,
       };
       try {
-        await axios.post("https://skulga-api.onrender.com/api/auth/register", user);
+        await axios.post("/auth/register", user);
         navigate("/login");
       } catch (err) {
         console.log(err);
@@ -50,7 +50,7 @@ export default function Register() {
             <input placeholder="Password Again" required ref={passwordAgain} className="loginInput" type="password"/>
 
             <button className="loginButton" type="submit">Sign Up</button>
-            <button className="loginRegisterButton">
+            <button className="loginRegisterButton" type="button" onClick={navigate("/login")}>
                 Log into Account
             </button>
           </form>
