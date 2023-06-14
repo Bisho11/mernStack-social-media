@@ -1,9 +1,27 @@
 import "./Rightbar.css";
 import { Users } from "../../dummyData";
 import Online from "../Online/Online";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import {Link} from "react-router-dom";
 
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const [friends, setFriends] = useState([]);
+  
+  useEffect(() => {
+    const getFriends = async () => {
+      try {
+        const friendList = await axios.get("https://skulga-api.onrender.com/api/users/friends/" + user._id);
+        setFriends(friendList.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getFriends();
+  }, [user._id]);
+
+
   const HomeRightbar = () => {
     return (
       <>
@@ -44,55 +62,27 @@ export default function Rightbar({ user }) {
         </div>
         <h4 className="rightbarTitle">User friends</h4>
         <div className="rightbarFollowings">
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/1.png`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">Bocchi san</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/2.png`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">Anxious Bocchi</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/3.png`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName"> Huh san</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/4.png`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">kita san</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/5.png`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">Cool bocchi san</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/6.png`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">My waife</span>
-          </div>
+          {friends.map((friend) => (
+            <Link
+              to={"/profile/" + friend.username}
+              style={{ textDecoration: "none" }}
+            >
+              <div className="rightbarFollowing">
+                <img
+                  src={
+                    friend.profilePicture
+                      ? PF + friend.profilePicture
+                      : PF + "person/default.png"
+                  }
+                  alt=""
+                  className="rightbarFollowingImg"
+                />
+                <span className="rightbarFollowingName">{friend.username}</span>
+              </div>
+            </Link>
+          ))}
         </div>
+        
       </>
     );
   };
